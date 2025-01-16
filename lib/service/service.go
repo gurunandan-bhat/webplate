@@ -1,12 +1,12 @@
 package service
 
 import (
+	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
 	"webplate/lib/config"
 	"webplate/lib/cstore"
-	"webplate/lib/render"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -18,7 +18,7 @@ type Service struct {
 	// Model        *model.Model
 	Muxer        *chi.Mux
 	SessionStore *cstore.SessionStore
-	Template     *render.Templates
+	Template     map[string]*template.Template
 }
 
 func NewService(cfg *config.Config) (*Service, error) {
@@ -66,7 +66,7 @@ func NewService(cfg *config.Config) (*Service, error) {
 	fs := http.FileServer(filesDir)
 	mux.Handle("/assets/*", http.StripPrefix("/assets", fs))
 
-	template, err := render.NewTemplates(filepath.Join(cfg.AppRoot, "templates"))
+	template, err := newTemplateCache(filepath.Join(cfg.AppRoot, "templates"))
 	if err != nil {
 		log.Fatalf("Cannot build template cache: %s", err)
 	}
@@ -85,5 +85,8 @@ func NewService(cfg *config.Config) (*Service, error) {
 
 func (s *Service) setRoutes() {
 
-	s.Muxer.Method(http.MethodGet, "/", ServiceHandler(s.Index))
+	s.Muxer.Method(http.MethodGet, "/", ServiceHandler(s.index))
+	s.Muxer.Method(http.MethodGet, "/about", ServiceHandler(s.about))
+	s.Muxer.Method(http.MethodGet, "/action", ServiceHandler(s.action))
+	s.Muxer.Method(http.MethodGet, "/another-action", ServiceHandler(s.anotherAction))
 }

@@ -5,18 +5,16 @@ import (
 )
 
 type IndexPageData struct {
+	Title   string
 	Message string
 }
 
-func (s *Service) Index(w http.ResponseWriter, r *http.Request) error {
+func (s *Service) index(w http.ResponseWriter, r *http.Request) error {
 
 	data := IndexPageData{
-		Message: "Hello, World!",
+		Title:   "Home",
+		Message: "This is the Home Page",
 	}
 
-	if err := s.Template.Render(w, "index", data); err != nil {
-		return err
-	}
-
-	return nil
+	return s.render(w, "index.go.html", data, http.StatusOK)
 }
