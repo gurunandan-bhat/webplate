@@ -7,6 +7,7 @@ import (
 type anotherActionPageData struct {
 	Title   string
 	Message string
+	CurrVal int
 }
 
 func (s *Service) anotherAction(w http.ResponseWriter, r *http.Request) error {

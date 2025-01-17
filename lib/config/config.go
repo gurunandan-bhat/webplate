@@ -28,10 +28,12 @@ type Config struct {
 		CSRFKey string `json:"csrfKey,omitempty"`
 	} `json:"security,omitempty"`
 	Session struct {
-		Name        string `json:"name,omitempty"`
-		Path        string `json:"path,omitempty"`
-		Domain      string `json:"domain,omitempty"`
-		MaxAgeHours int    `json:"maxAgeHours,omitempty"`
+		Name              string `json:"name,omitempty"`
+		Path              string `json:"path,omitempty"`
+		Domain            string `json:"domain,omitempty"`
+		MaxAgeHours       int    `json:"maxAgeHours,omitempty"`
+		AuthenticationKey string `json:"authenticationKey,omitempty"`
+		EncryptionKey     string `json:"encryptionKey,omitempty"`
 	} `json:"session,omitempty"`
 }
 

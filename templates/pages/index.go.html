@@ -5,6 +5,7 @@
             <hr class="mb-5" />
             <div class="col-lg-5">{{ .Message }}</div>
             <div class="col-lg-7">
+                <p>Currval: {{ with .CurrVal }}{{ . }}{{ end }}</p>
                 <p>
                     Lorem Ipsum is simply dummy text of the printing and
                     typesetting industry. Lorem Ipsum has been the industry's
