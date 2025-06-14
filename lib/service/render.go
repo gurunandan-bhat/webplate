@@ -31,6 +31,11 @@ func newTemplateCache(templateRoot string) (map[string]*template.Template, error
 		if err != nil {
 			return nil, fmt.Errorf("error creating template set for %s: %w", page, err)
 		}
+		tSet, err = tSet.ParseGlob(templateRoot + "/includes/*.go.html")
+		if err != nil {
+			return nil, fmt.Errorf("error parsing included templates set for %s: %w", page, err)
+		}
+
 		cache[name] = tSet
 		fmt.Println(name)
 	}
