@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"log/slog"
 	"net/http"
+	"os"
 	"path/filepath"
 	"webplate/lib/config"
 	"webplate/lib/model"
@@ -22,6 +24,7 @@ type Service struct {
 	Muxer        *chi.Mux
 	SessionStore *mysqlstore.MysqlStore
 	Template     map[string]*template.Template
+	Logger       *slog.Logger
 }
 
 func NewService(cfg *config.Config) (*Service, error) {
@@ -77,12 +80,16 @@ func NewService(cfg *config.Config) (*Service, error) {
 		log.Fatalf("Cannot build template cache: %s", err)
 	}
 
+	// Create an slog logger
+	logger := slog.New(slog.NewTextHandler(os.Stderr, nil))
+
 	s := &Service{
 		Config:       cfg,
 		SessionStore: dbStore,
 		Model:        model,
 		Muxer:        mux,
 		Template:     template,
+		Logger:       logger,
 	}
 
 	s.setRoutes()
