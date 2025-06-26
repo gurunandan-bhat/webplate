@@ -41,8 +41,10 @@ func NewService(cfg *config.Config) (*Service, error) {
 
 	mux.Use(middleware.RequestID)
 	mux.Use(middleware.RealIP)
-	mux.Use(middleware.Logger)
 	mux.Use(middleware.Recoverer)
+
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	mux.Use(newSlogger(cfg, logger))
 
 	mux.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:*"},
@@ -79,9 +81,6 @@ func NewService(cfg *config.Config) (*Service, error) {
 	if err != nil {
 		log.Fatalf("Cannot build template cache: %s", err)
 	}
-
-	// Create an slog logger
-	logger := slog.New(slog.NewTextHandler(os.Stderr, nil))
 
 	s := &Service{
 		Config:       cfg,
