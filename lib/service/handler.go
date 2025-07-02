@@ -5,9 +5,9 @@ import (
 	"net/http"
 )
 
-type ServiceHandler func(w http.ResponseWriter, r *http.Request) error
+type serviceHandler func(w http.ResponseWriter, r *http.Request) error
 
-func (h ServiceHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h serviceHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if err := h(w, r); err != nil {
 		http.Error(

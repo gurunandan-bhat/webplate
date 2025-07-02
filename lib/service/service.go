@@ -43,9 +43,6 @@ func NewService(cfg *config.Config) (*Service, error) {
 	mux.Use(middleware.RealIP)
 	mux.Use(middleware.Recoverer)
 
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	mux.Use(newSlogger(cfg, logger))
-
 	mux.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -82,6 +79,8 @@ func NewService(cfg *config.Config) (*Service, error) {
 		log.Fatalf("Cannot build template cache: %s", err)
 	}
 
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+
 	s := &Service{
 		Config:       cfg,
 		SessionStore: dbStore,
@@ -98,10 +97,10 @@ func NewService(cfg *config.Config) (*Service, error) {
 
 func (s *Service) setRoutes() {
 
-	s.Muxer.Method(http.MethodGet, "/", ServiceHandler(s.index))
-	s.Muxer.Method(http.MethodGet, "/about", ServiceHandler(s.about))
-	s.Muxer.Method(http.MethodGet, "/action", ServiceHandler(s.action))
-	s.Muxer.Method(http.MethodGet, "/another-action", ServiceHandler(s.anotherAction))
+	s.Muxer.Method(http.MethodGet, "/", serviceHandler(s.logMiddleware((s.index))))
+	s.Muxer.Method(http.MethodGet, "/about", serviceHandler((s.logMiddleware(s.about))))
+	s.Muxer.Method(http.MethodGet, "/action", serviceHandler((s.logMiddleware(s.action))))
+	s.Muxer.Method(http.MethodGet, "/another-action", serviceHandler((s.logMiddleware(s.anotherAction))))
 }
 
 func (s *Service) getSessionVar(r *http.Request, name string) (any, error) {
