@@ -97,7 +97,7 @@ func NewService(cfg *config.Config) (*Service, error) {
 
 func (s *Service) setRoutes() {
 
-	s.Muxer.Method(http.MethodGet, "/", serviceHandler(s.logMiddleware((s.index))))
+	s.Muxer.Method(http.MethodGet, "/", serviceHandler(s.logAnotherMiddleware(s.logMiddleware((s.index)))))
 	s.Muxer.Method(http.MethodGet, "/about", serviceHandler((s.logMiddleware(s.about))))
 	s.Muxer.Method(http.MethodGet, "/action", serviceHandler((s.logMiddleware(s.action))))
 	s.Muxer.Method(http.MethodGet, "/another-action", serviceHandler((s.logMiddleware(s.anotherAction))))
